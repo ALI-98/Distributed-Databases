@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import com.rabbitmq.client.Channel;
@@ -179,7 +181,22 @@ public class BranchOffice {
                     statement.setInt(4,qty);
                     statement.setDouble(5,cost);
                     statement.setDouble(6,cost*qty);
-                    statement.executeUpdate();
+                    int affected=statement.executeUpdate();
+                    if(affected!=0){
+                        Sales sale =new Sales();
+                        ResultSet generatedKeys=statement.getGeneratedKeys();
+                        if(generatedKeys.next()){
+                            sale.setId(generatedKeys.getInt(1));
+                            sale.setCost(cost);
+                            Date dateSql = Date.valueOf(date);
+                            sale.setDate(dateSql);
+                            sale.setProduct(product);
+                            sale.setQty(qty);
+                            sale.setRegion(region);
+                            sale.setTotal(cost*qty);
+                            currentSales.add(sale);
+                        }
+                    }
                 }catch(SQLException ex){
                     ex.printStackTrace();
                 }
@@ -214,7 +231,7 @@ public class BranchOffice {
             Connection connection =factory.newConnection();
             Channel channel=connection.createChannel();
             channel.queueDeclare(queue,false,false,false,null);
-            byte[] data = SerializationUtils.serialize(sales);
+            byte[] data = SerializationUtils.serialize(currentSales);
             channel.basicPublish("",queue,null,data);
 
         }catch(Exception e){

@@ -10,6 +10,9 @@ public class Sales implements Serializable {
     public double cost;
     public double total;
 
+    public Sales(){
+
+    };
 
     public Sales(int id, Date date, String region, String product, int qty, double cost, double total) {
         this.id=id;
@@ -70,5 +73,9 @@ public class Sales implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
