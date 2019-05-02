@@ -51,7 +51,7 @@ public class BranchOffice {
 
     public void init(){
         connectToDb();
-        JFrame frame = new JFrame("Sales Management");
+        JFrame frame = new JFrame("Sales Management for Branch Office "+ url.substring(2) );
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JButton jButton1=new JButton("show data");
         jButton1.setBounds(120,130,150,20);
@@ -165,6 +165,8 @@ public class BranchOffice {
         JLabel labelCost=new JLabel("Cost");
         final JTextField costField=new JTextField(5);
 
+        final JTextArea resultArea=new JTextArea();
+
         JButton submitButoon=new JButton("Submit");
         submitButoon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -195,9 +197,18 @@ public class BranchOffice {
                             sale.setRegion(region);
                             sale.setTotal(cost*qty);
                             currentSales.add(sale);
+
+                            costField.setText("");
+                            dateField.setText("");
+                            qtyField.setText("");
+                            productField.setText("");
+                            resultArea.setText("Successfully Added sale record !");
                         }
+                    }else{
+                        resultArea.setText("Cannot add sale record !");
                     }
                 }catch(SQLException ex){
+                    resultArea.setText("Cannot add sale record !");
                     ex.printStackTrace();
                 }
             }
@@ -212,6 +223,7 @@ public class BranchOffice {
         frame.add(labelCost);
         frame.add(costField);
         frame.add(submitButoon);
+        frame.add(resultArea);
 
         frame.setLayout(new FlowLayout());
         frame.setVisible(true);
